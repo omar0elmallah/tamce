@@ -5,24 +5,85 @@ function loadPosts() {
     const posts = JSON.parse(localStorage.getItem('posts')) || [];
     const postsContainer = document.getElementById('postsContainer');
     posts.forEach(post => {
-        const postDiv = createPostElement(post.text, post.time);
+        const postDiv = createPostElement(post);
         postsContainer.appendChild(postDiv);
     });
 }
 
-function createPostElement(text, time) {
+function createPostElement(post) {
     const postDiv = document.createElement('div');
     postDiv.classList.add('post');
 
     const postContent = document.createElement('p');
-    postContent.textContent = text;
+    postContent.textContent = post.text;
 
     const postTime = document.createElement('div');
     postTime.classList.add('time');
-    postTime.textContent = time;
+    postTime.textContent = post.time;
 
+    // إضافة أزرار الإعجاب والتعليقات
+    const actionsDiv = document.createElement('div');
+    actionsDiv.classList.add('post-actions');
+
+    const likeButton = document.createElement('button');
+    likeButton.textContent = 'إعجاب';
+    const likesCount = document.createElement('span');
+    likesCount.classList.add('likes-count');
+    likesCount.textContent = ` (${post.likes || 0})`;
+    likeButton.onclick = () => {
+        post.likes = (post.likes || 0) + 1;
+        likesCount.textContent = ` (${post.likes})`;
+        updateLocalStorage();
+    };
+
+    const commentButton = document.createElement('button');
+    commentButton.textContent = 'تعليق';
+
+    actionsDiv.appendChild(likeButton);
+    actionsDiv.appendChild(likesCount);
+    actionsDiv.appendChild(commentButton);
+
+    // حقل التعليقات
+    const commentSection = document.createElement('div');
+    commentSection.classList.add('comment-section');
+
+    const commentInput = document.createElement('input');
+    commentInput.classList.add('comment-input');
+    commentInput.placeholder = 'اكتب تعليقًا...';
+
+    const commentsList = document.createElement('div');
+    commentsList.classList.add('comments-list');
+    if (post.comments) {
+        post.comments.forEach(comment => {
+            const commentP = document.createElement('p');
+            commentP.classList.add('comment');
+            commentP.textContent = comment;
+            commentsList.appendChild(commentP);
+        });
+    }
+
+    commentInput.onkeypress = (e) => {
+        if (e.key === 'Enter' && commentInput.value.trim()) {
+            const commentText = commentInput.value.trim();
+            const commentP = document.createElement('p');
+            commentP.classList.add('comment');
+            commentP.textContent = commentText;
+            commentsList.appendChild(commentP);
+            post.comments = post.comments || [];
+            post.comments.push(commentText);
+            commentInput.value = '';
+            updateLocalStorage();
+        }
+    };
+
+    commentSection.appendChild(commentInput);
+    commentSection.appendChild(commentsList);
+
+    // تجميع العناصر
     postDiv.appendChild(postContent);
     postDiv.appendChild(postTime);
+    postDiv.appendChild(actionsDiv);
+    postDiv.appendChild(commentSection);
 
     return postDiv;
 }
@@ -36,21 +97,38 @@ function addPost() {
         return;
     }
 
-    const postTime = new Date().toLocaleString('ar-EG');
-    const post = { text: postText, time: postTime };
+    const post = {
+        text: postText,
+        time: new Date().toLocaleString('ar-EG'),
+        likes: 0,
+        comments: []
+    };
 
     // إضافة المنشور إلى الصفحة
     const postsContainer = document.getElementById('postsContainer');
-    const postDiv = createPostElement(postText, postTime);
+    const postDiv = createPostElement(post);
     postsContainer.insertBefore(postDiv, postsContainer.firstChild);
 
     // حفظ المنشور في localStorage
     const posts = JSON.parse(localStorage.getItem('posts')) || [];
-    posts.unshift(post); // إضافة المنشور الجديد في البداية
+    posts.unshift(post);
     localStorage.setItem('posts', JSON.stringify(posts));
 
     // مسح حقل الإدخال
     postInput.value = '';
+}
+
+// تحديث localStorage بعد كل تغيير
+function updateLocalStorage() {
+    const posts = [];
+    document.querySelectorAll('.post').forEach(postDiv => {
+        const text = postDiv.querySelector('p').textContent;
+        const time = postDiv.querySelector('.time').textContent;
+        const likes = parseInt(postDiv.querySelector('.likes-count').textContent.match(/\d+/)?.[0] || 0);
+        const comments = Array.from(postDiv.querySelectorAll('.comment')).map(c => c.textContent);
+        posts.push({ text, time, likes, comments });
+    });
+    localStorage.setItem('posts', JSON.stringify(posts));
 }
 
 // السماح بالنشر بضغط Enter
