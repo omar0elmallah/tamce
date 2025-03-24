@@ -85,3 +85,49 @@ header h1 {
     font-size: 12px;
     margin-top: 5px;
 }
+
+/* تنسيق زر الإعجاب والتعليقات */
+.post-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.post-actions button {
+    background: none;
+    border: none;
+    color: #1877f2;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.post-actions button:hover {
+    text-decoration: underline;
+}
+
+.likes-count {
+    color: #555;
+    font-size: 12px;
+}
+
+.comment-section {
+    margin-top: 10px;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.comments-list {
+    margin-top: 5px;
+}
+
+.comment {
+    font-size: 14px;
+    color: #333;
+    margin: 5px 0;
+}
