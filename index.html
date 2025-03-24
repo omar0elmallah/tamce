@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدونة شبيهة بفيسبوك</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <header>
+        <h1>مدونتي</h1>
+        <div class="user">مرحبًا، [اسمك]</div>
+    </header>
+
+    <!-- نموذج إضافة منشور -->
+    <div class="post-form">
+        <textarea id="postInput" placeholder="ما الذي تفكر فيه؟"></textarea>
+        <button onclick="addPost()">نشر</button>
+    </div>
+
+    <!-- منطقة المنشورات -->
+    <div id="postsContainer" class="posts"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
