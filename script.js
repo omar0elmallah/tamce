@@ -1,5 +1,33 @@
+// تحميل المنشورات عند بدء الصفحة
+document.addEventListener('DOMContentLoaded', loadPosts);
+
+function loadPosts() {
+    const posts = JSON.parse(localStorage.getItem('posts')) || [];
+    const postsContainer = document.getElementById('postsContainer');
+    posts.forEach(post => {
+        const postDiv = createPostElement(post.text, post.time);
+        postsContainer.appendChild(postDiv);
+    });
+}
+
+function createPostElement(text, time) {
+    const postDiv = document.createElement('div');
+    postDiv.classList.add('post');
+
+    const postContent = document.createElement('p');
+    postContent.textContent = text;
+
+    const postTime = document.createElement('div');
+    postTime.classList.add('time');
+    postTime.textContent = time;
+
+    postDiv.appendChild(postContent);
+    postDiv.appendChild(postTime);
+
+    return postDiv;
+}
+
 function addPost() {
-    // الحصول على نص المنشور من حقل الإدخال
     const postInput = document.getElementById('postInput');
     const postText = postInput.value.trim();
 
@@ -8,23 +36,18 @@ function addPost() {
         return;
     }
 
-    // إنشاء عنصر منشور جديد
-    const postDiv = document.createElement('div');
-    postDiv.classList.add('post');
+    const postTime = new Date().toLocaleString('ar-EG');
+    const post = { text: postText, time: postTime };
 
-    const postContent = document.createElement('p');
-    postContent.textContent = postText;
-
-    const postTime = document.createElement('div');
-    postTime.classList.add('time');
-    postTime.textContent = new Date().toLocaleString('ar-EG');
-
-    postDiv.appendChild(postContent);
-    postDiv.appendChild(postTime);
-
-    // إضافة المنشور إلى الحاوية
+    // إضافة المنشور إلى الصفحة
     const postsContainer = document.getElementById('postsContainer');
+    const postDiv = createPostElement(postText, postTime);
     postsContainer.insertBefore(postDiv, postsContainer.firstChild);
+
+    // حفظ المنشور في localStorage
+    const posts = JSON.parse(localStorage.getItem('posts')) || [];
+    posts.unshift(post); // إضافة المنشور الجديد في البداية
+    localStorage.setItem('posts', JSON.stringify(posts));
 
     // مسح حقل الإدخال
     postInput.value = '';
