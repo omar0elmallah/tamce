@@ -131,3 +131,16 @@ header h1 {
     color: #333;
     margin: 5px 0;
 }
+
+/* تنسيق الإشعارات */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #1877f2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+    z-index: 1000;
+}
