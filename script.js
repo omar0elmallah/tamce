@@ -21,7 +21,7 @@ function createPostElement(post) {
     postTime.classList.add('time');
     postTime.textContent = post.time;
 
-    // إضافة أزرار الإعجاب والتعليقات والمشاركة والتعديل والحذف
+    // إضافة أزرار الإعجاب والتعليقات
     const actionsDiv = document.createElement('div');
     actionsDiv.classList.add('post-actions');
 
@@ -40,6 +40,7 @@ function createPostElement(post) {
     const commentButton = document.createElement('button');
     commentButton.textContent = 'تعليق';
 
+    // إضافة زر المشاركة
     const shareButton = document.createElement('button');
     shareButton.textContent = 'مشاركة';
     shareButton.onclick = () => {
@@ -58,6 +59,7 @@ function createPostElement(post) {
         showNotification('تمت مشاركة المنشور');
     };
 
+    // إضافة زر التعديل
     const editButton = document.createElement('button');
     editButton.textContent = 'تعديل';
     editButton.onclick = () => {
@@ -70,6 +72,7 @@ function createPostElement(post) {
         }
     };
 
+    // إضافة زر الحذف
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'حذف';
     deleteButton.onclick = () => {
@@ -126,7 +129,7 @@ function createPostElement(post) {
 
     // تجميع العناصر
     postDiv.appendChild(postContent);
-    postDiv.append postTime);
+    postDiv.appendChild(postTime);
     postDiv.appendChild(actionsDiv);
     postDiv.appendChild(commentSection);
 
@@ -177,7 +180,7 @@ function updateLocalStorage() {
     localStorage.setItem('posts', JSON.stringify(posts));
 }
 
-// عرض إشعار
+// إضافة دالة الإشعارات
 function showNotification(message) {
     let notification = document.querySelector('.notification');
     if (!notification) {
