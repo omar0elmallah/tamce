@@ -21,7 +21,7 @@ function createPostElement(post) {
     postTime.classList.add('time');
     postTime.textContent = post.time;
 
-    // إضافة أزرار الإعجاب والتعليقات
+    // إضافة أزرار الإعجاب والتعليقات والمشاركة والتعديل والحذف
     const actionsDiv = document.createElement('div');
     actionsDiv.classList.add('post-actions');
 
@@ -34,14 +34,58 @@ function createPostElement(post) {
         post.likes = (post.likes || 0) + 1;
         likesCount.textContent = ` (${post.likes})`;
         updateLocalStorage();
+        showNotification('تم الإعجاب بالمنشور');
     };
 
     const commentButton = document.createElement('button');
     commentButton.textContent = 'تعليق';
 
+    const shareButton = document.createElement('button');
+    shareButton.textContent = 'مشاركة';
+    shareButton.onclick = () => {
+        const sharedPost = {
+            text: `تمت المشاركة: ${post.text}`,
+            time: new Date().toLocaleString('ar-EG'),
+            likes: 0,
+            comments: []
+        };
+        const postsContainer = document.getElementById('postsContainer');
+        const newPostDiv = createPostElement(sharedPost);
+        postsContainer.insertBefore(newPostDiv, postsContainer.firstChild);
+        const posts = JSON.parse(localStorage.getItem('posts')) || [];
+        posts.unshift(sharedPost);
+        localStorage.setItem('posts', JSON.stringify(posts));
+        showNotification('تمت مشاركة المنشور');
+    };
+
+    const editButton = document.createElement('button');
+    editButton.textContent = 'تعديل';
+    editButton.onclick = () => {
+        const newText = prompt('عدّل المنشور:', post.text);
+        if (newText && newText.trim()) {
+            post.text = newText.trim();
+            postContent.textContent = post.text;
+            updateLocalStorage();
+            showNotification('تم تعديل المنشور');
+        }
+    };
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'حذف';
+    deleteButton.onclick = () => {
+        if (confirm('هل تريد حذف هذا المنشور؟')) {
+            postDiv.remove();
+            updateLocalStorage();
+            showNotification('تم حذف المنشور');
+        }
+    };
+
     actionsDiv.appendChild(likeButton);
     actionsDiv.appendChild(likesCount);
     actionsDiv.appendChild(commentButton);
+    actionsDiv.appendChild(shareButton);
+    actionsDiv.appendChild(editButton);
+    actionsDiv.appendChild(deleteButton);
 
     // حقل التعليقات
     const commentSection = document.createElement('div');
@@ -73,6 +117,7 @@ function createPostElement(post) {
             post.comments.push(commentText);
             commentInput.value = '';
             updateLocalStorage();
+            showNotification('تم إضافة تعليق');
         }
     };
 
@@ -81,7 +126,7 @@ function createPostElement(post) {
 
     // تجميع العناصر
     postDiv.appendChild(postContent);
-    postDiv.appendChild(postTime);
+    postDiv.append postTime);
     postDiv.appendChild(actionsDiv);
     postDiv.appendChild(commentSection);
 
@@ -116,6 +161,7 @@ function addPost() {
 
     // مسح حقل الإدخال
     postInput.value = '';
+    showNotification('تم نشر المنشور');
 }
 
 // تحديث localStorage بعد كل تغيير
@@ -129,6 +175,21 @@ function updateLocalStorage() {
         posts.push({ text, time, likes, comments });
     });
     localStorage.setItem('posts', JSON.stringify(posts));
+}
+
+// عرض إشعار
+function showNotification(message) {
+    let notification = document.querySelector('.notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.classList.add('notification');
+        document.body.appendChild(notification);
+    }
+    notification.textContent = message;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 2000); // الإشعار يختفي بعد ثانيتين
 }
 
 // السماح بالنشر بضغط Enter
